@@ -1,0 +1,25 @@
+{{- $cfg := .Values.global.graphinstaller.graphinstaller.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "graphinstaller.fullname" . }}
+  labels:
+    {{- include "graphinstaller.labels" . | nindent 4 }}
+data:
+  {{ .Values.global.graphinstaller.graphinstaller.config_file }}: |
+{{ $cfg | mustToPrettyJson | trim | indent 4 }}
+
+---
+{{- $installs_cfg := .Values.global.graphinstaller.graphinstaller.installs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "graphinstaller.fullname" . }}-installs
+  labels:
+    {{- include "graphinstaller.labels" . | nindent 4 }}
+data:
+  {{ .Values.global.graphinstaller.graphinstaller.installs_file }}: |
+{{- with $installs_cfg }}
+    installs:
+{{- toYaml . | nindent 6 }}
+{{- end }}

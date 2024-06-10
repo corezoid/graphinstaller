@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "graphinstaller.fullname" . }}
+  labels:
+    {{- include "graphinstaller.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.global.graphinstaller.graphinstaller.autoscaling.enabled }}
+  replicas: {{ .Values.global.graphinstaller.graphinstaller.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "graphinstaller.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "graphinstaller.labels" . | nindent 8 }}
+        {{- with .Values.global.graphinstaller.graphinstaller.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets.name }}
+      {{- end }}
+      serviceAccountName: {{ include "graphinstaller.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.global.graphinstaller.graphinstaller.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.global.graphinstaller.graphinstaller.securityContext | nindent 12 }}
+          image: "{{ .Values.global.graphinstaller.graphinstaller.image.repository }}:{{ .Values.global.graphinstaller.graphinstaller.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.graphinstaller.graphinstaller.image.pullPolicy }}
+          command: ["/graph-installer/graph-installer"]
+          args: ["--config=/graph-installer/{{ .Values.global.graphinstaller.graphinstaller.config_file }}", "--install=/graph-installer/{{ .Values.global.graphinstaller.graphinstaller.installs_file }}"]
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.global.graphinstaller.graphinstaller.config.metrics.listen_port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.global.graphinstaller.graphinstaller.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /graph-installer/{{ .Values.global.graphinstaller.graphinstaller.config_file }}
+              subPath: {{ .Values.global.graphinstaller.graphinstaller.config_file }}
+            - name: installs
+              mountPath: /graph-installer/{{ .Values.global.graphinstaller.graphinstaller.installs_file }}
+              subPath: {{ .Values.global.graphinstaller.graphinstaller.installs_file }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "graphinstaller.fullname" . }}
+        - name: installs
+          configMap:
+            name: {{ include "graphinstaller.fullname" . }}-installs
+      {{- with .Values.global.graphinstaller.graphinstaller.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.graphinstaller.graphinstaller.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.graphinstaller.graphinstaller.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

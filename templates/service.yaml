@@ -8,8 +8,12 @@ spec:
   type: {{ .Values.global.graphinstaller.graphinstaller.service.type }}
   ports:
     - port: {{ .Values.global.graphinstaller.graphinstaller.service.port }}
-      targetPort: http
+      targetPort: apiserver
       protocol: TCP
-      name: http
+      name: apiserver
+    - port: {{ .Values.global.graphinstaller.graphinstaller.config.metrics.listen_port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
   selector:
     {{- include "graphinstaller.selectorLabels" . | nindent 4 }}

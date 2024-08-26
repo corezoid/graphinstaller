@@ -1,4 +1,6 @@
-{{- $cfg := .Values.global.graphinstaller.graphinstaller.config }}
+{{- $global_data := .Values.global }}
+{{- $graphinstaller_data := $global_data.graphinstaller.graphinstaller }}
+{{- $cfg := $graphinstaller_data.config }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

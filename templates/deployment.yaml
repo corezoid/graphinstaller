@@ -1,7 +1,8 @@
 {{- $global_data := .Values.global }}
 {{- $graphinstaller_data := $global_data.graphinstaller.graphinstaller }}
 {{- $graphinstaller_config := $graphinstaller_data.config }}
-apiVersion: apps/v1
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ include "graphinstaller.fullname" . }}

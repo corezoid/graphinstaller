@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## Chart 1.0.7 [GraphInstaller 1.2.0] - 2024-08-26
+### Helm changes
+- Fixed bugs in apigw CDU
+- Use envVar for apigw graph file
+- Added INTERNAL_HOST to envs
+
 ## Chart 1.0.6 [GraphInstaller 1.1.1] - 2024-08-26
 ### Helm changes
 - Helm chart code refactoring.

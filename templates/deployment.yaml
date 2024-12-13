@@ -80,6 +80,9 @@ spec:
           imagePullPolicy: {{ $graphinstaller_data.image.pullPolicy }}
           command: ["/graph-installer/graph-installer"]
           args: ["--config=/graph-installer/{{ $graphinstaller_data.config_file }}", "--install=/graph-installer/{{ $graphinstaller_data.installs_file }}"]
+          env:
+            - name: INTERNAL_HOST
+              value: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
           ports:
             - name: apiserver
               containerPort: {{ $graphinstaller_data.config.api_server.listen_port }}

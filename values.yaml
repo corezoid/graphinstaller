@@ -18,7 +18,7 @@ global:
       config_file: "graph-installer.json"
       config:
         log_level: debug
-        workspace_id: SET_NULL_WORKSPACE_ID
+        workspace: SET_NULL_WORKSPACE_ID
         internal_host: '${INTERNAL_HOST}'
         postgres:
           host: DB_HOST
@@ -125,7 +125,6 @@ global:
       # requests:
       #   cpu: 100m
       #   memory: 128Mi
-
       livenessProbe: {}
       # livenessProbe:
       #   httpGet:
